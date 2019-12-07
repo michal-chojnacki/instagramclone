@@ -1,5 +1,7 @@
 package com.github.michalchojnacki.instagramclone
 
+import com.github.michalchojnacki.instagramclone.domain.JwtTokenUseCases
+import com.github.michalchojnacki.instagramclone.domain.MyUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -19,7 +21,7 @@ class JwtRequestFilter : OncePerRequestFilter() {
     @Autowired
     private lateinit var userDetailsService: MyUserDetailsService
     @Autowired
-    private lateinit var jwtUtil: JwtUtil
+    private lateinit var jwtTokenUseCases: JwtTokenUseCases
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
@@ -28,11 +30,11 @@ class JwtRequestFilter : OncePerRequestFilter() {
         var jwt: String? = null
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
             jwt = authorizationHeader.substring(TOKEN_PREFIX.length)
-            username = jwtUtil.extractUsername(jwt)
+            username = jwtTokenUseCases.extractUsername(jwt)
         }
         if (jwt != null && username != null && SecurityContextHolder.getContext().authentication == null) {
             val userDetails = userDetailsService.loadUserByUsername(username)
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            if (jwtTokenUseCases.validateToken(jwt, userDetails)) {
                 val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.authorities)
                 usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)

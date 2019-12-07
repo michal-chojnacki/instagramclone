@@ -1,4 +1,4 @@
-package com.github.michalchojnacki.instagramclone
+package com.github.michalchojnacki.instagramclone.domain
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -12,7 +12,7 @@ import kotlin.collections.HashMap
 private const val SECRET_KEY = "secret"
 
 @Service
-class JwtUtil {
+class JwtTokenUseCases {
     fun extractUsername(token: String): String {
         return extractClaim(token, Function { obj: Claims -> obj.subject })
     }

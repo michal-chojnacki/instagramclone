@@ -1,5 +1,6 @@
 package com.github.michalchojnacki.instagramclone
 
+import com.github.michalchojnacki.instagramclone.domain.MyUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AuthenticationManager
@@ -25,7 +26,7 @@ class SecurityConfigurer : WebSecurityConfigurerAdapter() {
 
     override fun configure(httpSecurity: HttpSecurity) {
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate").permitAll().anyRequest().authenticated()
+                .authorizeRequests().antMatchers("/authenticate", "/register").permitAll().anyRequest().authenticated()
                 .and().exceptionHandling()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
