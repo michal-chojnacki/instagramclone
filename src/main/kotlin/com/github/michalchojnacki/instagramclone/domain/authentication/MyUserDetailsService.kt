@@ -1,4 +1,4 @@
-package com.github.michalchojnacki.instagramclone.domain
+package com.github.michalchojnacki.instagramclone.domain.authentication
 
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails

@@ -1,4 +1,4 @@
-package com.github.michalchojnacki.instagramclone.domain
+package com.github.michalchojnacki.instagramclone.domain.authentication
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts

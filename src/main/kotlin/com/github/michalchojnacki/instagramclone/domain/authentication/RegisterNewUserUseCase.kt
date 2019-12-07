@@ -1,4 +1,4 @@
-package com.github.michalchojnacki.instagramclone.domain
+package com.github.michalchojnacki.instagramclone.domain.authentication
 
 import com.github.michalchojnacki.instagramclone.common.Result
 import org.springframework.stereotype.Service

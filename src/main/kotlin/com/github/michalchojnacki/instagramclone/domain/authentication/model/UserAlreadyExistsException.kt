@@ -1,4 +1,4 @@
-package com.github.michalchojnacki.instagramclone.domain.model
+package com.github.michalchojnacki.instagramclone.domain.authentication.model
 
 import java.lang.Exception
 

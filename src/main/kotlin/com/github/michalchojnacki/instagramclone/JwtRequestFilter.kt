@@ -1,7 +1,7 @@
 package com.github.michalchojnacki.instagramclone
 
-import com.github.michalchojnacki.instagramclone.domain.JwtTokenUseCases
-import com.github.michalchojnacki.instagramclone.domain.MyUserDetailsService
+import com.github.michalchojnacki.instagramclone.domain.authentication.JwtTokenUseCases
+import com.github.michalchojnacki.instagramclone.domain.authentication.MyUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
