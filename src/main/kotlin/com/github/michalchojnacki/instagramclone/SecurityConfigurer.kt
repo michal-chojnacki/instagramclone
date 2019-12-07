@@ -1,6 +1,6 @@
 package com.github.michalchojnacki.instagramclone
 
-import com.github.michalchojnacki.instagramclone.domain.authentication.MyUserDetailsService
+import com.github.michalchojnacki.instagramclone.domain.authentication.AppUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AuthenticationManager
@@ -16,12 +16,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class SecurityConfigurer : WebSecurityConfigurerAdapter() {
     @Autowired
-    private lateinit var myUserDetailsService: MyUserDetailsService
+    private lateinit var appUserDetailsService: AppUserDetailsService
     @Autowired
     private lateinit var jwtRequestFilter: JwtRequestFilter
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(myUserDetailsService)
+        auth.userDetailsService(appUserDetailsService)
     }
 
     override fun configure(httpSecurity: HttpSecurity) {

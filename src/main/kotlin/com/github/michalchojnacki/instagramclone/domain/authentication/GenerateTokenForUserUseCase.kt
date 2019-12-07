@@ -16,7 +16,7 @@ class GenerateTokenForUserUseCase {
     private lateinit var  jwtTokenUseCases: JwtTokenUseCases
 
     @Autowired
-    private lateinit var  userDetailsService: MyUserDetailsService
+    private lateinit var  userDetailsService: AppUserDetailsService
 
     operator fun invoke(username: String, password: String) : Result<String> {
         try {

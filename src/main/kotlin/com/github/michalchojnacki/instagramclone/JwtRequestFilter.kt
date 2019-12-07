@@ -1,7 +1,7 @@
 package com.github.michalchojnacki.instagramclone
 
 import com.github.michalchojnacki.instagramclone.domain.authentication.JwtTokenUseCases
-import com.github.michalchojnacki.instagramclone.domain.authentication.MyUserDetailsService
+import com.github.michalchojnacki.instagramclone.domain.authentication.AppUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -19,7 +19,7 @@ private const val TOKEN_PREFIX = "Bearer "
 @Component
 class JwtRequestFilter : OncePerRequestFilter() {
     @Autowired
-    private lateinit var userDetailsService: MyUserDetailsService
+    private lateinit var userDetailsService: AppUserDetailsService
     @Autowired
     private lateinit var jwtTokenUseCases: JwtTokenUseCases
 
