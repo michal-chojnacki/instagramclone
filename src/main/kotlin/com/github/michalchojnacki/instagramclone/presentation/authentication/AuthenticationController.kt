@@ -6,8 +6,8 @@ import com.github.michalchojnacki.instagramclone.domain.authentication.GenerateT
 import com.github.michalchojnacki.instagramclone.domain.authentication.RegisterNewUserUseCase
 import com.github.michalchojnacki.instagramclone.domain.authentication.model.UserAlreadyExistsException
 import com.github.michalchojnacki.instagramclone.domain.common.UnexpectedException
-import com.github.michalchojnacki.instagramclone.presentation.model.AuthenticationRequest
-import com.github.michalchojnacki.instagramclone.presentation.model.AuthenticationResponse
+import com.github.michalchojnacki.instagramclone.presentation.authentication.model.AuthenticationRequest
+import com.github.michalchojnacki.instagramclone.presentation.authentication.model.AuthenticationResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.BadCredentialsException
@@ -24,7 +24,7 @@ class AuthenticationController {
     private lateinit var registerNewUser: RegisterNewUserUseCase
 
     @PostMapping("/register")
-    fun registerUser(@RequestBody authenticationRequest: AuthenticationRequest): ResponseEntity<AuthenticationResponse>? {
+    fun registerUser(@RequestBody authenticationRequest: AuthenticationRequest): ResponseEntity<AuthenticationResponse> {
         when(val result = registerNewUser(authenticationRequest.username, authenticationRequest.password)) {
             is Result.Success -> Unit
             is Result.Error -> when(val e = result.exception) {
@@ -41,7 +41,7 @@ class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    fun createAuthenticationToken(@RequestBody authenticationRequest: AuthenticationRequest): ResponseEntity<AuthenticationResponse>? {
+    fun createAuthenticationToken(@RequestBody authenticationRequest: AuthenticationRequest): ResponseEntity<AuthenticationResponse> {
         return when(val result = generateTokenForUser(authenticationRequest.username, authenticationRequest.password)) {
             is Result.Success -> ResponseEntity.ok(AuthenticationResponse(result.data))
             is Result.Error -> when(val e = result.exception) {
