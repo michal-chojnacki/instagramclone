@@ -26,7 +26,12 @@ class SecurityConfigurer : WebSecurityConfigurerAdapter() {
 
     override fun configure(httpSecurity: HttpSecurity) {
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate", "/register").permitAll().anyRequest().authenticated()
+                .authorizeRequests().antMatchers(
+                        "/authenticate",
+                        "/register",
+                        "/images/*/*.jpg"
+                )
+                .permitAll().anyRequest().authenticated()
                 .and().exceptionHandling()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)

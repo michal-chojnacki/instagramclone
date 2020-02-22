@@ -8,17 +8,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service
 
 @Service
-class GenerateTokenForUserUseCase {
-    @Autowired
-    private lateinit var authenticationManager: AuthenticationManager
+class GenerateTokenForUserUseCase @Autowired constructor(private val authenticationManager: AuthenticationManager,
+                                                         private val jwtTokenUseCases: JwtTokenUseCases,
+                                                         private val userDetailsService: AppUserDetailsService) {
 
-    @Autowired
-    private lateinit var  jwtTokenUseCases: JwtTokenUseCases
-
-    @Autowired
-    private lateinit var  userDetailsService: AppUserDetailsService
-
-    operator fun invoke(username: String, password: String) : Result<String> {
+    operator fun invoke(username: String, password: String): Result<String> {
         try {
             authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
         } catch (e: BadCredentialsException) {
