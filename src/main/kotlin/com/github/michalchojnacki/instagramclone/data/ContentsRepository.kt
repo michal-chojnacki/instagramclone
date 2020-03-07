@@ -1,34 +1,39 @@
 package com.github.michalchojnacki.instagramclone.data
 
 import com.github.michalchojnacki.instagramclone.common.Result
+import com.github.michalchojnacki.instagramclone.data.mapper.ContentMapper
+import com.github.michalchojnacki.instagramclone.data.model.RawContent
 import com.github.michalchojnacki.instagramclone.domain.content.model.Content
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Scope
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
-import java.util.concurrent.TimeUnit
+import org.springframework.web.multipart.MultipartFile
 
-@Scope("singleton")
 @Repository
-class ContentsRepository @Autowired constructor(private val imagesRepository: ImagesRepository,
-                                                private val userRepository: UserRepository) {
-    private val contents : MutableList<Content>
-    init {
-        val user1 = userRepository.getUser("Cristiano Ronaldo")
-        val user2 = userRepository.getUser("Leo Messi")
-        val user3 = userRepository.getUser("Zenon")
-        contents = mutableListOf(
-                Content(imagesRepository.getContentImage(4), "Disco !!", user3, System.currentTimeMillis()),
-                Content(imagesRepository.getContentImage(1), "Hala Madrid", user1, System.currentTimeMillis() - TimeUnit.DAYS.toMillis(4)),
-                Content(imagesRepository.getContentImage(2), "Visca el Barca", user2, System.currentTimeMillis() - TimeUnit.DAYS.toMillis(10)),
-                Content(imagesRepository.getContentImage(3), "Comemos", user1, System.currentTimeMillis() - TimeUnit.DAYS.toMillis(20)))
-    }
-
+class ContentsRepository @Autowired constructor(private val contentsCrudRepository: ContentsCrudRepository,
+                                                private val userCrudRepository: UsersCrudRepository,
+                                                private val contentMapper: ContentMapper) {
     fun loadAllContents() : Result<List<Content>> {
-        return Result.Success(contents.toList())
+        return Result.Success(contentsCrudRepository.findAll(Sort.by(Sort.Direction.DESC, "publicationTimestamp")).map { contentMapper.map(it) })
     }
 
-    fun addContent(content: Content) : Result<Unit> {
-        contents.add(0, content)
+    fun loadUserContents(username: String) : Result<List<Content>> {
+        val userDetailsId = userCrudRepository.findByUsername(username)?.id ?: return Result.Error(Exception("Error fetching user details"))
+        return loadUserContents(userDetailsId)
+    }
+
+    fun loadUserContents(userId: Long) : Result<List<Content>> {
+        return Result.Success(contentsCrudRepository.findByOwnerId(userId, Sort.by(Sort.Direction.DESC, "publicationTimestamp")).map { contentMapper.map(it) })
+    }
+
+    fun searchForContent(query: String) : Result<List<Content>> {
+        return Result.Success(contentsCrudRepository.findByOwnerNameOrOwnerBio(query, query).map { contentMapper.map(it) })
+    }
+
+    fun saveContent(message: String, username: String, image: MultipartFile, contentImageId : Long) : Result<Unit> {
+        val userDetails = userCrudRepository.findByUsername(username) ?: return Result.Error(Exception("Error fetching user details"))
+        val content = RawContent(message, userDetails, contentImageId, System.currentTimeMillis())
+        contentsCrudRepository.save(content)
         return Result.Success(Unit)
     }
 }

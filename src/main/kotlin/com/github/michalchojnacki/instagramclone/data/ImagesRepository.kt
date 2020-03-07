@@ -1,9 +1,9 @@
 package com.github.michalchojnacki.instagramclone.data
 
 import com.github.michalchojnacki.instagramclone.common.Result
+import com.github.michalchojnacki.instagramclone.data.model.ImageUrlMapper
 import com.github.michalchojnacki.instagramclone.domain.content.model.Image
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
@@ -11,17 +11,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 @Repository
-class ImagesRepository @Autowired constructor(@Value("\${server.port}") serverPort : String,
-                                              @Value("\${server.address}")  serverAddress : String) {
-    private val imagesRoot = "http://$serverAddress:$serverPort/images"
-
-    fun getContentImage(id: Long) : Image {
-        return Image("$imagesRoot/contents/$id.jpg")
-    }
-
-    fun getAvatarImage(id: Long) : Image {
-        return Image("$imagesRoot/users/$id.jpg")
-    }
+class ImagesRepository @Autowired constructor(private val imageUrlMapper: ImageUrlMapper) {
 
     fun saveContentImage(image: MultipartFile, id: Long) : Result<Image> {
         val resource = ImagesRepository::class.java.getResource("/static/images/contents")
@@ -42,6 +32,6 @@ class ImagesRepository @Autowired constructor(@Value("\${server.port}") serverPo
             return Result.Error(e)
         }
 
-        return Result.Success(getContentImage(id))
+        return Result.Success(imageUrlMapper.map(id))
     }
 }
