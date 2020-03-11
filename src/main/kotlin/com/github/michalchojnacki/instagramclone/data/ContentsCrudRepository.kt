@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository
 interface ContentsCrudRepository : PagingAndSortingRepository<RawContent, Long> {
     fun findByOwnerId(ownerId: Long, sort: Sort) : List<RawContent>
 
-    fun findByOwnerNameOrOwnerBio(ownerName: String, ownerBio : String) : List<RawContent>
+    fun findByOwnerFullnameOrOwnerBio(ownerName: String, ownerBio : String) : List<RawContent>
 }

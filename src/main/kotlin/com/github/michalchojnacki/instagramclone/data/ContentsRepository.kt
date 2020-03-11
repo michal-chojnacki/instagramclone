@@ -27,7 +27,7 @@ class ContentsRepository @Autowired constructor(private val contentsCrudReposito
     }
 
     fun searchForContent(query: String) : Result<List<Content>> {
-        return Result.Success(contentsCrudRepository.findByOwnerNameOrOwnerBio(query, query).map { contentMapper.map(it) })
+        return Result.Success(contentsCrudRepository.findByOwnerFullnameOrOwnerBio(query, query).map { contentMapper.map(it) })
     }
 
     fun saveContent(message: String, username: String, image: MultipartFile, contentImageId : Long) : Result<Unit> {

@@ -17,7 +17,7 @@ class RawUserDetails {
     @Column
     var bio: String? = null
     @Column
-    var name: String? = null
+    var fullname: String? = null
 
     constructor()
 

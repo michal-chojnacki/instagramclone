@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component
 class UserDetailsMapper @Autowired constructor(private val avatarUrlMapper: AvatarUrlMapper) : Mapper<RawUserDetails, UserDetails> {
     override fun map(input: RawUserDetails): UserDetails {
         return UserDetails(input.id!!, input.username!!, avatarUrlMapper.map(input.avatarId ?: 0), input.bio
-                ?: "", input.name ?: "")
+                ?: "", input.fullname ?: "")
     }
 }
