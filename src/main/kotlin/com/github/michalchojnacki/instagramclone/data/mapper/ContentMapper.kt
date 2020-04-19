@@ -12,6 +12,7 @@ class ContentMapper @Autowired constructor(private val userMapper: UserDetailsMa
                                            private val imageUrlMapper: ImageUrlMapper) : Mapper<RawContent, Content> {
     override fun map(input: RawContent): Content {
         return Content(input.id!!, imageUrlMapper.map(input.imageId!!), input.description!!,
-                userMapper.map(input.owner!!), input.publicationTimestamp!!)
+                userMapper.map(input.owner!!), 5,
+                input.publicationTimestamp!!)
     }
 }

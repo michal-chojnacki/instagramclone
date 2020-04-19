@@ -11,22 +11,42 @@ import org.springframework.stereotype.Repository
 @Repository
 class UsersRepository @Autowired constructor(private val userCrudRepository: UsersCrudRepository,
                                              private val userMapper: UserDetailsMapper) {
+    private val observableStatuses = mutableMapOf<Long, Map<Long, Boolean>>()
+
     fun findByUsername(username: String): Result<UserDetails> {
         return userCrudRepository.findByUsername(username)?.let { Result.Success(userMapper.map(it)) }
                 ?: Result.Error(Exception("No user with username $username"))
     }
 
-    fun registerUser(username: String, password: String) : Result<Unit> {
+    fun registerUser(username: String, password: String): Result<Unit> {
         userCrudRepository.save(RawUserDetails(username, password))
         return Result.Success(Unit)
     }
 
+    fun updateUserProfile(userId: Long, bio: String?, username: String?, fullname: String?): Result<Unit> {
+        return Result.Success(Unit)
+    }
+
     fun findUserDetailsByUsername(username: String): Result<User> {
-        val rawUserDetails = userCrudRepository.findByUsername(username) ?: return Result.Error(Exception("No user with username $username"))
+        val rawUserDetails = userCrudRepository.findByUsername(username)
+                ?: return Result.Error(Exception("No user with username $username"))
         return Result.Success(rawUserDetails.let { User(it.username, it.password, emptyList()) })
     }
 
     fun getRecommendedUsers(username: String): Result<List<UserDetails>> {
         return Result.Success(userCrudRepository.findAll().filter { it.username != username }.map { userMapper.map(it) })
+    }
+
+    fun saveObservingStatus(userId: Long, observableUserId: Long, status: Boolean): Result<Unit> {
+        val userObservableStatuses = observableStatuses[userId] ?: emptyMap()
+        observableStatuses[userId] = userObservableStatuses.toMutableMap().apply {
+            this[observableUserId] = status
+        }.toMap()
+        return Result.Success(Unit)
+    }
+
+    fun loadObservingStatus(userId: Long, observableUserId: Long): Result<Boolean> {
+        val userObservableStatuses = observableStatuses[userId] ?: emptyMap()
+        return Result.Success(userObservableStatuses[observableUserId] ?: false)
     }
 }

@@ -3,9 +3,7 @@ package com.github.michalchojnacki.instagramclone.presentation.profile
 import com.github.michalchojnacki.instagramclone.common.Result
 import com.github.michalchojnacki.instagramclone.domain.common.UnexpectedException
 import com.github.michalchojnacki.instagramclone.domain.content.model.UserDetails
-import com.github.michalchojnacki.instagramclone.domain.profile.GetObservingStatusUseCase
-import com.github.michalchojnacki.instagramclone.domain.profile.GetRecommendedUsersUseCase
-import com.github.michalchojnacki.instagramclone.domain.profile.GetUserDetailsUseCase
+import com.github.michalchojnacki.instagramclone.domain.profile.*
 import com.github.michalchojnacki.instagramclone.presentation.profile.model.ObservingStatus
 import com.github.michalchojnacki.instagramclone.presentation.profile.model.RecommendedUsers
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +15,9 @@ import java.security.Principal
 @RestController
 class ProfileController @Autowired constructor(private val getUserDetails: GetUserDetailsUseCase,
                                                private val getObservingStatus: GetObservingStatusUseCase,
-                                               private val getRecommendedUsers: GetRecommendedUsersUseCase) {
+                                               private val getRecommendedUsers: GetRecommendedUsersUseCase,
+                                               private val setObservingStatus: SetObservingStatusUseCase,
+                                               private val updateUser: UpdateUserUseCase) {
     @GetMapping("/user")
     fun provideUserDetails(principal: Principal): ResponseEntity<UserDetails> {
         return when (val result = getUserDetails(principal.name)) {
@@ -44,7 +44,10 @@ class ProfileController @Autowired constructor(private val getUserDetails: GetUs
 
     @PostMapping("/observing")
     fun updateObservingStatus(principal: Principal, @RequestBody observingStatus: ObservingStatus): ResponseEntity<*> {
-        return ResponseEntity.ok(Unit)
+        return when (val result = setObservingStatus(principal.name, observingStatus.userId, observingStatus.status)) {
+            is Result.Success -> ResponseEntity.ok(Unit)
+            is Result.Error -> throw UnexpectedException(result.exception)
+        }
     }
 
     @PostMapping("/user")
@@ -53,6 +56,9 @@ class ProfileController @Autowired constructor(private val getUserDetails: GetUs
                    @RequestPart("username") username: String?,
                    @RequestPart("fullname") fullname: String?,
                    @RequestPart("avatar") avatar: MultipartFile?): ResponseEntity<*> {
-        return ResponseEntity.ok(Unit)
+        return when (val result = updateUser(principal.name, bio, username, fullname, avatar)) {
+            is Result.Success -> ResponseEntity.ok(Unit)
+            is Result.Error -> throw UnexpectedException(result.exception)
+        }
     }
 }

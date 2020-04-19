@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class GetObservingStatusUseCase @Autowired constructor(private val getUserDetails: GetUserDetailsUseCase,
+class SetObservingStatusUseCase @Autowired constructor(private val getUserDetails: GetUserDetailsUseCase,
                                                        private val usersRepository: UsersRepository) {
-    operator fun invoke(username: String, observableUserId: Long): Result<Boolean> {
+    operator fun invoke(username: String, observableUserId: Long, observingStatus: Boolean): Result<Unit> {
         val userId = when (val result = getUserDetails.invoke(username)) {
             is Result.Success -> result.data.id
             is Result.Error -> return Result.Error(result.exception)
         }
-        return usersRepository.loadObservingStatus(userId, observableUserId)
+        usersRepository.saveObservingStatus(userId, observableUserId, observingStatus)
+        return Result.Success(Unit)
     }
 }
