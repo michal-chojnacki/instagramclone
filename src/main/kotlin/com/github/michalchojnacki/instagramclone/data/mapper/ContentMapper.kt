@@ -9,9 +9,12 @@ import org.springframework.stereotype.Component
 
 @Component
 class ContentMapper @Autowired constructor(private val userMapper: UserDetailsMapper,
-                                           private val imageUrlMapper: ImageUrlMapper) : Mapper<RawContent, Content> {
-    override fun map(input: RawContent): Content {
-        return Content(input.id!!, imageUrlMapper.map(input.imageId!!), input.description!!,
-                userMapper.map(input.owner!!), input.publicationTimestamp!!)
+                                           private val imageUrlMapper: ImageUrlMapper) : Mapper<Pair<RawContent, Int>, Content> {
+    override fun map(input: Pair<RawContent, Int>): Content {
+        val rawContent = input.first
+        val likesCount = input.second
+        return Content(rawContent.id!!, imageUrlMapper.map(rawContent.imageId!!), rawContent.description!!,
+                userMapper.map(rawContent.owner!!), likesCount,
+                rawContent.publicationTimestamp!!)
     }
 }
