@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 class GetLikeStatusesUseCase @Autowired constructor(
         private val getUserDetails: GetUserDetailsUseCase,
         private val userDataRepository: UserDataRepository) {
+
     operator fun invoke(username: String, contentIds: List<Long>): Result<LikeStatuses> {
         val userId = when (val result = getUserDetails.invoke(username)) {
             is Result.Success -> result.data.id

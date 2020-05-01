@@ -2,16 +2,19 @@ package com.github.michalchojnacki.instagramclone.data
 
 import com.github.michalchojnacki.instagramclone.common.Result
 import com.github.michalchojnacki.instagramclone.data.mapper.UserDetailsMapper
+import com.github.michalchojnacki.instagramclone.data.model.RawLike
+import com.github.michalchojnacki.instagramclone.data.model.RawObservation
 import com.github.michalchojnacki.instagramclone.data.model.RawUserDetails
 import com.github.michalchojnacki.instagramclone.domain.content.model.UserDetails
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 class UsersRepository @Autowired constructor(private val userCrudRepository: UsersCrudRepository,
+                                             private val observableStatusCrudRepository: ObservableStatusCrudRepository,
                                              private val userMapper: UserDetailsMapper) {
-    private val observableStatuses = mutableMapOf<Long, Map<Long, Boolean>>()
 
     fun findByUsername(username: String): Result<UserDetails> {
         return userCrudRepository.findByUsername(username)?.let { Result.Success(userMapper.map(it)) }
@@ -37,16 +40,18 @@ class UsersRepository @Autowired constructor(private val userCrudRepository: Use
         return Result.Success(userCrudRepository.findAll().filter { it.username != username }.map { userMapper.map(it) })
     }
 
+    @Transactional
     fun saveObservingStatus(userId: Long, observableUserId: Long, status: Boolean): Result<Unit> {
-        val userObservableStatuses = observableStatuses[userId] ?: emptyMap()
-        observableStatuses[userId] = userObservableStatuses.toMutableMap().apply {
-            this[observableUserId] = status
-        }.toMap()
+        if (status) {
+            observableStatusCrudRepository.save(RawObservation(userId, observableUserId))
+        } else {
+            observableStatusCrudRepository.deleteByOwnerIdAndObservingId(userId, observableUserId)
+        }
         return Result.Success(Unit)
     }
 
     fun loadObservingStatus(userId: Long, observableUserId: Long): Result<Boolean> {
-        val userObservableStatuses = observableStatuses[userId] ?: emptyMap()
-        return Result.Success(userObservableStatuses[observableUserId] ?: false)
+        val status = observableStatusCrudRepository.findByOwnerIdAndObservingId(userId, observableUserId)
+        return Result.Success(status != null)
     }
 }

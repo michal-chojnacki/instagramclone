@@ -14,6 +14,6 @@ class SetLikeStatusUseCase @Autowired constructor(private val getUserDetails: Ge
             is Result.Success -> result.data.id
             is Result.Error -> return Result.Error(result.exception)
         }
-        return userDataRepository.saveLikeStatus(userId, contentId, status)
+        return userDataRepository.saveLikeStatus(userId, contentId, !status)
     }
 }
