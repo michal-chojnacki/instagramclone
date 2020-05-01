@@ -2,7 +2,6 @@ package com.github.michalchojnacki.instagramclone.data
 
 import com.github.michalchojnacki.instagramclone.common.Result
 import com.github.michalchojnacki.instagramclone.data.mapper.UserDetailsMapper
-import com.github.michalchojnacki.instagramclone.data.model.RawLike
 import com.github.michalchojnacki.instagramclone.data.model.RawObservation
 import com.github.michalchojnacki.instagramclone.data.model.RawUserDetails
 import com.github.michalchojnacki.instagramclone.domain.content.model.UserDetails
@@ -27,6 +26,16 @@ class UsersRepository @Autowired constructor(private val userCrudRepository: Use
     }
 
     fun updateUserProfile(userId: Long, bio: String?, username: String?, fullname: String?): Result<Unit> {
+        val userDetailsOptional = userCrudRepository.findById(userId)
+        val userDetails = if (userDetailsOptional.isPresent) {
+            userDetailsOptional.get()
+        } else {
+            return Result.Error(Exception("No user with id $userId"))
+        }
+        bio?.let { userDetails.bio = it }
+        username?.let { userDetails.username = it }
+        fullname?.let { userDetails.fullname = it }
+        userCrudRepository.save(userDetails)
         return Result.Success(Unit)
     }
 
