@@ -9,4 +9,6 @@ interface UserDataCrudRepository : CrudRepository<RawLike, Long> {
     fun deleteByUserIdAndContentId(userId: Long, contentId: Long): List<RawLike>
 
     fun findByUserId(userId: Long): List<RawLike>
+
+    fun countByContentId(contentId: Long): Long
 }
