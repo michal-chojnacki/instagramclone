@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "app.extras.path",
+      "type": "java.lang.String",
+      "description": "Path for extra resources.",
+      "defaultValue": "/instagramapp/extras"
+    }
+  ]
+}
