@@ -5,6 +5,12 @@
       "type": "java.lang.String",
       "description": "Path for extra resources.",
       "defaultValue": "/instagramapp/extras"
+    },
+    {
+      "name": "app.extras.ip",
+      "type": "java.lang.String",
+      "description": "IP address for extras resources.",
+      "defaultValue": "localhost"
     }
   ]
 }
